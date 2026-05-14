@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Results Reality Check — Possibility.ca</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ─── Reset ─────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+button{font-family:inherit;cursor:pointer}
+input{font-family:inherit}
+
+/* ─── Tokens ─────────────────────────────────────────── */
+:root{
+  --bg:#F0F4FA;
+  --surface:#FFFFFF;
+  --text-primary:#0a2a45;
+  --text-secondary:#3a5268;
+  --text-muted:#7a96ae;
+  --accent:#084170;
+  --accent-hover:#063358;
+  --accent-light:#deeaf8;
+  --accent-mid:#4b7cbf;
+  --orange:#f9b101;
+  --orange-light:#fef4d0;
+  --border:rgba(8,65,112,0.10);
+  --border-strong:rgba(8,65,112,0.20);
+  --danger:#B84230;
+  --warning:#A06020;
+  --success:#2D6040;
+  --radius:12px;
+  --radius-sm:8px;
+  --max-w:600px;
+}
+
+/* ─── Layout ─────────────────────────────────────────── */
+body{
+  font-family:'Roboto',sans-serif;
+  background:var(--bg);
+  color:var(--text-primary);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:0 0 4rem;
+}
+
+.assessment-wrap{
+  width:100%;
+  max-width:var(--max-w);
+  background:var(--surface);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 0 0 1px var(--border);
+}
+
+/* ─── Progress bar ───────────────────────────────────── */
+.progress-track{
+  height:3px;
+  background:var(--border);
+  position:sticky;
+  top:0;
+  z-index:20;
+}
+.progress-fill{
+  height:100%;
+  background:var(--accent);
+  transition:width 0.4s cubic-bezier(.4,0,.2,1);
+}
+
+/* ─── Screens ────────────────────────────────────────── */
+.screen{
+  display:none;
+  flex-direction:column;
+  padding:2.5rem 2rem 3rem;
+  flex:1;
+  animation:fadeUp 0.3s ease;
+}
+.screen.active{display:flex;}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(12px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* ─── Typography ─────────────────────────────────────── */
+.step-label{
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  margin-bottom:1.25rem;
+}
+.screen-title{
+  font-family:'Libre Baskerville',Georgia,serif;
+  font-size:1.9rem;
+  line-height:1.2;
+  margin-bottom:0.625rem;
+}
+.screen-sub{
+  font-size:15px;
+  color:var(--text-secondary);
+  line-height:1.7;
+  margin-bottom:2rem;
+}
+.instruction-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:var(--orange-light);
+  color:#7a4e00;
+  font-size:12px;
+  font-weight:500;
+  padding:5px 12px;
+  border-radius:100px;
+  margin-bottom:1.75rem;
+}
+
+/* ─── Likert ─────────────────────────────────────────── */
+.likert-questions{display:flex;flex-direction:column;gap:1.125rem;}
+
+.question-row{
+  background:var(--bg);
+  border-radius:var(--radius-sm);
+  padding:1rem 1rem 0.875rem;
+  border:1px solid transparent;
+  transition:border-color 0.2s;
+}
+.question-row.answered{border-color:var(--border);}
+
+.question-text{
+  font-size:14px;
+  line-height:1.55;
+  margin-bottom:0.875rem;
+}
+
+.likert-scale{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:5px;
+}
+
+.l-btn{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  background:none;
+  border:none;
+  padding:0;
+}
+
+.l-circle{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  border:1.5px solid var(--border-strong);
+  background:var(--surface);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  font-weight:500;
+  color:var(--text-secondary);
+  transition:all 0.15s;
+}
+
+.l-btn:hover .l-circle{
+  border-color:var(--accent);
+  color:var(--accent);
+  background:var(--accent-light);
+}
+.l-btn.selected .l-circle{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#fff;
+}
+.l-caption{
+  font-size:9.5px;
+  color:var(--text-muted);
+  text-align:center;
+  line-height:1.25;
+}
+
+/* ─── Choice buttons ─────────────────────────────────── */
+.choices{display:flex;flex-direction:column;gap:9px;margin-bottom:1.5rem;}
+
+.choice-btn{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:var(--bg);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:0.8rem 1rem;
+  text-align:left;
+  font-size:14px;
+  color:var(--text-primary);
+  transition:all 0.15s;
+  width:100%;
+}
+.choice-btn:hover{border-color:var(--accent-mid);background:var(--accent-light);}
+.choice-btn.selected{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
+
+.c-indicator{
+  width:20px;height:20px;
+  border-radius:50%;
+  border:1.5px solid var(--border-strong);
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;
+}
+.choice-btn.selected .c-indicator{background:var(--accent);border-color:var(--accent);}
+
+.c-dot{width:8px;height:8px;border-radius:50%;background:#fff;display:none;}
+.choice-btn.selected .c-dot{display:block;}
+
+.c-indicator.multi{border-radius:4px;}
+.c-check{font-size:10px;color:#fff;font-weight:700;display:none;}
+.choice-btn.selected .c-check{display:block;}
+.choice-btn.selected .c-indicator.multi{background:var(--accent);border-color:var(--accent);}
+
+.q-heading{
+  font-size:15px;
+  font-weight:500;
+  line-height:1.5;
+  margin-bottom:0.75rem;
+  color:var(--text-primary);
+}
+.q-section{margin-bottom:1.5rem;}
+.q-section:last-child{margin-bottom:0;}
+
+/* ─── Email form ─────────────────────────────────────── */
+.form-stack{display:flex;flex-direction:column;gap:1rem;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-label{font-size:12px;font-weight:500;color:var(--text-secondary);letter-spacing:0.04em;}
+.form-input{
+  border:1.5px solid var(--border-strong);
+  border-radius:var(--radius-sm);
+  padding:0.75rem 1rem;
+  font-size:15px;
+  color:var(--text-primary);
+  background:var(--surface);
+  outline:none;
+  transition:border-color 0.2s;
+  width:100%;
+}
+.form-input:focus{border-color:var(--accent);}
+.privacy-note{font-size:12px;color:var(--text-muted);text-align:center;margin-top:0.5rem;}
+
+/* ─── Buttons ────────────────────────────────────────── */
+.btn-primary{
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  border-radius:var(--radius-sm);
+  padding:0.9rem 1.5rem;
+  font-size:15px;
+  font-weight:500;
+  width:100%;
+  margin-top:1.5rem;
+  transition:opacity 0.15s,transform 0.1s;
+  letter-spacing:0.01em;
+}
+.btn-primary:hover{opacity:0.88;}
+.btn-primary:active{transform:scale(0.99);}
+.btn-primary:disabled{opacity:0.38;cursor:not-allowed;}
+
+.nav-row{display:flex;gap:0.75rem;margin-top:auto;padding-top:2rem;}
+
+.btn-back{
+  background:transparent;
+  color:var(--text-secondary);
+  border:1.5px solid var(--border-strong);
+  border-radius:var(--radius-sm);
+  padding:0.75rem 1.25rem;
+  font-size:14px;
+  transition:all 0.15s;
+  flex-shrink:0;
+}
+.btn-back:hover{border-color:var(--accent);color:var(--accent);}
+
+.btn-next{
+  flex:1;
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  border-radius:var(--radius-sm);
+  padding:0.75rem 1.5rem;
+  font-size:15px;
+  font-weight:500;
+  transition:opacity 0.15s;
+}
+.btn-next:hover{opacity:0.88;}
+.btn-next:disabled{opacity:0.38;cursor:not-allowed;}
+
+/* ─── Results ────────────────────────────────────────── */
+#screen-results{padding:0;animation:fadeUp 0.35s ease;}
+
+.results-hero{
+  background:var(--accent);
+  color:#fff;
+  padding:2.5rem 2rem 2.25rem;
+}
+.r-overline{
+  font-size:11px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  opacity:0.65;
+  margin-bottom:0.75rem;
+}
+.r-headline{
+  font-family:'Libre Baskerville',serif;
+  font-size:1.6rem;
+  line-height:1.2;
+  margin-bottom:1.25rem;
+}
+.r-breakdown-label{
+  font-size:10px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  opacity:0.6;
+  margin-bottom:0.3rem;
+}
+.r-step-name{
+  font-family:'Libre Baskerville',serif;
+  font-style:italic;
+  font-size:2.25rem;
+  line-height:1.1;
+}
+.r-secondary{
+  margin-top:0.75rem;
+  font-size:13px;
+  opacity:0.75;
+}
+
+.results-body{
+  padding:2rem;
+  display:flex;
+  flex-direction:column;
+  gap:1.375rem;
+}
+
+.r-card{
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.25rem;
+  background:var(--surface);
+}
+.r-card-label{
+  font-size:10px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  margin-bottom:0.75rem;
+  font-weight:500;
+}
+.r-card-body{
+  font-size:14px;
+  color:var(--text-secondary);
+  line-height:1.75;
+}
+.r-card-body p+p{margin-top:0.5rem;}
+
+.pattern-block{
+  background:var(--accent-light);
+  border-left:3px solid var(--accent-mid);
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  padding:0.875rem 1rem;
+  font-size:14px;
+  color:var(--accent);
+  line-height:1.65;
+  margin:0.5rem 0;
+}
+.signature-line{
+  font-size:13px;
+  color:var(--text-muted);
+  font-style:italic;
+  margin-top:0.625rem;
+}
+.reframe{
+  font-family:'Libre Baskerville',serif;
+  font-size:1.25rem;
+  color:var(--text-primary);
+  line-height:1.4;
+}
+
+/* Score bars */
+.score-bars{display:flex;flex-direction:column;gap:10px;margin:0.5rem 0;}
+.score-bar-row{display:flex;align-items:center;gap:10px;}
+.sbl{font-size:13px;color:var(--text-secondary);width:82px;flex-shrink:0;}
+.sbt{flex:1;height:6px;background:var(--bg);border-radius:100px;overflow:hidden;}
+.sbf{height:100%;border-radius:100px;background:var(--accent);transition:width 0.9s ease;}
+.sbf.low{background:var(--danger);}
+.sbf.mid{background:var(--warning);}
+.sbf.high{background:var(--success);}
+.sbv{font-size:12px;font-weight:500;color:var(--text-secondary);width:32px;text-align:right;}
+
+/* CTA in results */
+.r-cta-card{
+  background:var(--accent);
+  border-radius:var(--radius);
+  padding:1.5rem;
+  color:#fff;
+  text-align:center;
+}
+.r-cta-label{
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  opacity:0.65;
+  margin-bottom:0.625rem;
+}
+.r-cta-body{font-size:14px;opacity:0.85;line-height:1.6;margin-bottom:1.25rem;}
+.btn-cta{
+  background:#fff;
+  color:var(--accent);
+  border:none;
+  border-radius:var(--radius-sm);
+  padding:0.875rem 1.5rem;
+  font-size:15px;
+  font-weight:500;
+  width:100%;
+  transition:opacity 0.15s;
+  font-family:inherit;
+  cursor:pointer;
+}
+.btn-cta:hover{opacity:0.9;}
+
+/* Segment badge */
+.segment-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:var(--orange-light);
+  color:#7a4e00;
+  font-size:12px;
+  font-weight:500;
+  padding:5px 12px;
+  border-radius:100px;
+  margin-bottom:0.75rem;
+}
+
+/* ─── Responsive ─────────────────────────────────────── */
+@media(max-width:500px){
+  .screen{padding:2rem 1.25rem 2.5rem;}
+  .results-hero{padding:2rem 1.25rem 1.75rem;}
+  .results-body{padding:1.5rem 1.25rem;}
+  .screen-title{font-size:1.6rem;}
+  .l-circle{width:34px;height:34px;}
+}
+</style>
+</head>
+<body>
+
+<div class="assessment-wrap" role="main">
+
+  <div class="progress-track" aria-hidden="true">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+
+  <!-- ─── LANDING ───────────────────────────────────── -->
+  <div class="screen active" id="screen-0">
+    <div class="step-label">Possibility.ca — Diagnostic Tool</div>
+    <h1 class="screen-title">The Results Reality Check</h1>
+    <p class="screen-sub">Most people try to fix what they can see — people, performance, or processes. But your results are being produced by a system. In less than 15 minutes, you'll see:</p>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem;">
+      <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-secondary);">
+        <span style="width:20px;height:20px;border-radius:50%;background:var(--orange-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#7a4e00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        Where your system is breaking down
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-secondary);">
+        <span style="width:20px;height:20px;border-radius:50%;background:var(--orange-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#7a4e00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        Why your results feel inconsistent
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-secondary);">
+        <span style="width:20px;height:20px;border-radius:50%;background:var(--orange-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#7a4e00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        Whether you can fix it from where you are
+      </div>
+    </div>
+    <p class="screen-sub" style="margin-bottom:1.5rem;">It's like x-ray vision for your business. Ready to get clear?</p>
+    <button class="btn-primary" onclick="goTo(1)">Start the Diagnostic →</button>
+  </div>
+
+  <!-- ─── STEP 1: INTEREST ──────────────────────────── -->
+  <div class="screen" id="screen-1">
+    <div class="step-label">Step 1 of 10</div>
+    <h2 class="screen-title">Interest</h2>
+    <p class="screen-sub">How attention enters your system.</p>
+    <div class="instruction-chip">Rate each statement: 1 = Not true &nbsp;·&nbsp; 3 = Somewhat true &nbsp;·&nbsp; 5 = Fully true</div>
+    <div class="likert-questions" id="lq-1">
+      <div class="question-row" data-step="1" data-q="0">
+        <p class="question-text">I have a consistent and predictable flow of inquiries or opportunities.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(1,0,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(1,0,2,this)"><span class="l-circle">2</span><span class="l-caption"></span></button>
+          <button class="l-btn" onclick="setLikert(1,0,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(1,0,4,this)"><span class="l-circle">4</span><span class="l-caption"></span></button>
+          <button class="l-btn" onclick="setLikert(1,0,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+      <div class="question-row" data-step="1" data-q="1">
+        <p class="question-text">I know exactly where my leads or opportunities are coming from.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(1,1,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(1,1,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(1,1,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(1,1,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(1,1,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+      <div class="question-row" data-step="1" data-q="2">
+        <p class="question-text">My messaging clearly attracts the right people.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(1,2,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(1,2,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(1,2,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(1,2,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(1,2,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+      <div class="question-row" data-step="1" data-q="3">
+        <p class="question-text">I am not relying on luck, referrals, or one-off efforts to generate interest.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(1,3,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(1,3,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(1,3,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(1,3,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(1,3,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo(0)">← Back</button>
+      <button class="btn-next" id="next-1" onclick="goTo(2)" disabled>Continue →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 2: AGREEMENT ─────────────────────────── -->
+  <div class="screen" id="screen-2">
+    <div class="step-label">Step 2 of 10</div>
+    <h2 class="screen-title">Agreement</h2>
+    <p class="screen-sub">Turning interest into decisions.</p>
+    <div class="instruction-chip">Rate each statement: 1 = Not true &nbsp;·&nbsp; 3 = Somewhat true &nbsp;·&nbsp; 5 = Fully true</div>
+    <div class="likert-questions" id="lq-2">
+      <div class="question-row" data-step="2" data-q="0">
+        <p class="question-text">People clearly understand the value of what I offer.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(2,0,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(2,0,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(2,0,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(2,0,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(2,0,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+      <div class="question-row" data-step="2" data-q="1">
+        <p class="question-text">Conversations consistently lead to a clear yes or no decision.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(2,1,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(2,1,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(2,1,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(2,1,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(2,1,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+      <div class="question-row" data-step="2" data-q="2">
+        <p class="question-text">I can confidently explain what I do and why it matters.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(2,2,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(2,2,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(2,2,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(2,2,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(2,2,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+      <div class="question-row" data-step="2" data-q="3">
+        <p class="question-text">Opportunities don't stall due to confusion or hesitation.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(2,3,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(2,3,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(2,3,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(2,3,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(2,3,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo(1)">← Back</button>
+      <button class="btn-next" id="next-2" onclick="goTo(3)" disabled>Continue →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 3: PAYMENT ───────────────────────────── -->
+  <div class="screen" id="screen-3">
+    <div class="step-label">Step 3 of 10</div>
+    <h2 class="screen-title">Payment</h2>
+    <p class="screen-sub">How value is exchanged.</p>
+    <div class="instruction-chip">Rate each statement: 1 = Not true &nbsp;·&nbsp; 3 = Somewhat true &nbsp;·&nbsp; 5 = Fully true</div>
+    <div class="likert-questions" id="lq-3">
+      <div class="question-row" data-step="3" data-q="0">
+        <p class="question-text">There is a clear and simple way for people to pay or commit.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(3,0,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(3,0,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(3,0,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(3,0,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(3,0,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+      <div class="question-row" data-step="3" data-q="1">
+        <p class="question-text">Payment or commitment happens without unnecessary delays.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(3,1,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(3,1,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(3,1,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(3,1,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(3,1,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+      <div class="question-row" data-step="3" data-q="2">
+        <p class="question-text">Pricing and terms are clear and rarely questioned.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(3,2,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(3,2,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(3,2,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(3,2,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(3,2,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+      <div class="question-row" data-step="3" data-q="3">
+        <p class="question-text">I don't lose opportunities between agreement and payment.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(3,3,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(3,3,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(3,3,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(3,3,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(3,3,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo(2)">← Back</button>
+      <button class="btn-next" id="next-3" onclick="goTo(4)" disabled>Continue →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 4: DELIVERY ──────────────────────────── -->
+  <div class="screen" id="screen-4">
+    <div class="step-label">Step 4 of 10</div>
+    <h2 class="screen-title">Delivery</h2>
+    <p class="screen-sub">How the work gets done.</p>
+    <div class="instruction-chip">Rate each statement: 1 = Not true &nbsp;·&nbsp; 3 = Somewhat true &nbsp;·&nbsp; 5 = Fully true</div>
+    <div class="likert-questions" id="lq-4">
+      <div class="question-row" data-step="4" data-q="0">
+        <p class="question-text">I have a consistent way of delivering my product or service.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(4,0,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(4,0,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(4,0,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(4,0,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(4,0,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+      <div class="question-row" data-step="4" data-q="1">
+        <p class="question-text">Results do not depend entirely on me personally.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(4,1,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(4,1,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(4,1,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(4,1,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(4,1,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+      <div class="question-row" data-step="4" data-q="2">
+        <p class="question-text">The experience is reliable and repeatable.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(4,2,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(4,2,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(4,2,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(4,2,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(4,2,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+      <div class="question-row" data-step="4" data-q="3">
+        <p class="question-text">I am not constantly reacting or reinventing how work gets done.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(4,3,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(4,3,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(4,3,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(4,3,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(4,3,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo(3)">← Back</button>
+      <button class="btn-next" id="next-4" onclick="goTo(5)" disabled>Continue →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 5: FOLLOW-UP ─────────────────────────── -->
+  <div class="screen" id="screen-5">
+    <div class="step-label">Step 5 of 10</div>
+    <h2 class="screen-title">Follow-Up</h2>
+    <p class="screen-sub">What happens after delivery.</p>
+    <div class="instruction-chip">Rate each statement: 1 = Not true &nbsp;·&nbsp; 3 = Somewhat true &nbsp;·&nbsp; 5 = Fully true</div>
+    <div class="likert-questions" id="lq-5">
+      <div class="question-row" data-step="5" data-q="0">
+        <p class="question-text">I consistently follow up after delivery or completion of work.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(5,0,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(5,0,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(5,0,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(5,0,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(5,0,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+      <div class="question-row" data-step="5" data-q="1">
+        <p class="question-text">I have a clear process for maintaining relationships.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(5,1,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(5,1,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(5,1,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(5,1,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(5,1,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+      <div class="question-row" data-step="5" data-q="2">
+        <p class="question-text">Clients or stakeholders don't feel forgotten after the work is done.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(5,2,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(5,2,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(5,2,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(5,2,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(5,2,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+      <div class="question-row" data-step="5" data-q="3">
+        <p class="question-text">Follow-up creates additional opportunities — repeat work, referrals, etc.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(5,3,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(5,3,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(5,3,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(5,3,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(5,3,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo(4)">← Back</button>
+      <button class="btn-next" id="next-5" onclick="goTo(6)" disabled>Continue →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 6: IMPROVEMENT ───────────────────────── -->
+  <div class="screen" id="screen-6">
+    <div class="step-label">Step 6 of 10</div>
+    <h2 class="screen-title">Improvement</h2>
+    <p class="screen-sub">How the system gets better.</p>
+    <div class="instruction-chip">Rate each statement: 1 = Not true &nbsp;·&nbsp; 3 = Somewhat true &nbsp;·&nbsp; 5 = Fully true</div>
+    <div class="likert-questions" id="lq-6">
+      <div class="question-row" data-step="6" data-q="0">
+        <p class="question-text">I regularly review what is working and what is not.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(6,0,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(6,0,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(6,0,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(6,0,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(6,0,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+      <div class="question-row" data-step="6" data-q="1">
+        <p class="question-text">I use data or feedback to improve results.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(6,1,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(6,1,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(6,1,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(6,1,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(6,1,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+      <div class="question-row" data-step="6" data-q="2">
+        <p class="question-text">I can clearly identify where breakdowns are happening.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(6,2,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(6,2,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(6,2,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(6,2,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(6,2,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+      <div class="question-row" data-step="6" data-q="3">
+        <p class="question-text">Improvements are built into how the system operates — not left to chance.</p>
+        <div class="likert-scale">
+          <button class="l-btn" onclick="setLikert(6,3,1,this)"><span class="l-circle">1</span><span class="l-caption">Not true</span></button>
+          <button class="l-btn" onclick="setLikert(6,3,2,this)"><span class="l-circle">2</span></button>
+          <button class="l-btn" onclick="setLikert(6,3,3,this)"><span class="l-circle">3</span><span class="l-caption">Somewhat</span></button>
+          <button class="l-btn" onclick="setLikert(6,3,4,this)"><span class="l-circle">4</span></button>
+          <button class="l-btn" onclick="setLikert(6,3,5,this)"><span class="l-circle">5</span><span class="l-caption">Fully true</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo(5)">← Back</button>
+      <button class="btn-next" id="next-6" onclick="goTo(7)" disabled>Continue →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 7: PATTERN RECOGNITION ─────────────── -->
+  <div class="screen" id="screen-7">
+    <div class="step-label">Step 7 of 10</div>
+    <h2 class="screen-title">Now let's look beneath the surface.</h2>
+    <p class="screen-sub">These questions help identify where you're compensating — and how.</p>
+
+    <div class="q-section">
+      <p class="q-heading">Where are you working harder than you should be to keep things functioning?</p>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:0.75rem;">Select all that apply.</p>
+      <div class="choices" id="q7-multi"></div>
+    </div>
+
+    <div class="q-section">
+      <p class="q-heading">Which step feels the most unpredictable or frustrating?</p>
+      <div class="choices" id="q7-frustrating"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo(6)">← Back</button>
+      <button class="btn-next" id="next-7" onclick="goTo(8)" disabled>Continue →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 8: PATTERN (continued) ──────────────── -->
+  <div class="screen" id="screen-8">
+    <div class="step-label">Step 8 of 10</div>
+    <h2 class="screen-title">When things break down…</h2>
+    <p class="screen-sub">Understanding your default response is key to understanding the pattern.</p>
+
+    <div class="q-section">
+      <p class="q-heading">When problems occur, what do you most often assume is the cause?</p>
+      <div class="choices" id="q8-cause"></div>
+    </div>
+
+    <div class="q-section">
+      <p class="q-heading">When something breaks down, what do you typically do?</p>
+      <div class="choices" id="q8-response"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo(7)">← Back</button>
+      <button class="btn-next" id="next-8" onclick="goTo(9)" disabled>Continue →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 9: AUTHORITY + SEGMENTATION ─────────── -->
+  <div class="screen" id="screen-9">
+    <div class="step-label">Step 9 of 10</div>
+    <h2 class="screen-title">Your role and decision-making ability.</h2>
+    <p class="screen-sub">This shapes what your next step actually looks like.</p>
+
+    <div class="q-section">
+      <p class="q-heading">Do you have the authority to change how this system operates?</p>
+      <div class="choices" id="q9-authority"></div>
+    </div>
+
+    <div class="q-section">
+      <p class="q-heading">Which best describes your role?</p>
+      <div class="choices" id="q9-role"></div>
+    </div>
+
+    <div class="q-section">
+      <p class="q-heading">What stage best describes your business or work environment?</p>
+      <div class="choices" id="q9-stage"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo(8)">← Back</button>
+      <button class="btn-next" id="next-9" onclick="goTo(10)" disabled>Continue →</button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 10: EMAIL CAPTURE ────────────────────── -->
+  <div class="screen" id="screen-10">
+    <div class="step-label">Step 10 of 10</div>
+    <h2 class="screen-title">Your results are ready.</h2>
+    <p class="screen-sub">Enter your details to see exactly where your system is breaking down — and what to do next.</p>
+    <div class="form-stack">
+      <div class="form-group">
+        <label class="form-label" for="field-name">First name</label>
+        <input class="form-input" id="field-name" type="text" placeholder="Your first name" oninput="checkEmail()">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="field-email">Email address <span style="color:var(--danger)">*</span></label>
+        <input class="form-input" id="field-email" type="email" placeholder="you@example.com" oninput="checkEmail()">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="field-biz">Business name <span style="font-weight:400;color:var(--text-muted)">(optional)</span></label>
+        <input class="form-input" id="field-biz" type="text" placeholder="Your business name">
+      </div>
+    </div>
+    <p class="privacy-note" style="margin-top:1rem;">We'll only send your results and relevant resources.</p>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo(9)">← Back</button>
+      <button class="btn-next" id="next-10" onclick="showResults()" disabled>Show Me My Results →</button>
+    </div>
+  </div>
+
+  <!-- ─── RESULTS ────────────────────────────────────── -->
+  <div class="screen" id="screen-results">
+    <div class="results-hero">
+      <p class="r-overline">Your Business MRI Results</p>
+      <h2 class="r-headline">Your system is breaking down at:</h2>
+      <p class="r-breakdown-label">Primary breakdown</p>
+      <p class="r-step-name" id="r-primary-name">—</p>
+      <p class="r-secondary" id="r-secondary-text"></p>
+    </div>
+
+    <div class="results-body">
+
+      <!-- Score bars -->
+      <div class="r-card">
+        <p class="r-card-label">Your system scores</p>
+        <div class="score-bars" id="score-bars"></div>
+      </div>
+
+      <!-- What this means -->
+      <div class="r-card">
+        <p class="r-card-label">What this means</p>
+        <div class="r-card-body" id="r-meaning"></div>
+      </div>
+
+      <!-- Pattern insight -->
+      <div class="r-card">
+        <p class="r-card-label">Based on your answers, you are likely compensating by:</p>
+        <div class="pattern-block" id="r-pattern-sentence"></div>
+        <p class="r-card-body" style="margin-top:0.625rem;">This keeps things working in the short term — but prevents the system from becoming stable and reliable.</p>
+        <p class="signature-line">Compensation keeps things working — but it hides the real problem.</p>
+      </div>
+
+      <!-- Reframe -->
+      <div class="r-card" style="text-align:center;padding:1.5rem;">
+        <p class="reframe">Your results are not random.<br>They are being produced by how your system is currently designed.</p>
+      </div>
+
+      <!-- Authority pathway -->
+      <div class="r-card">
+        <p class="r-card-label">Your pathway</p>
+        <div class="r-card-body" id="r-authority"></div>
+      </div>
+
+      <!-- One action -->
+      <div class="r-card" style="border-color:var(--orange);background:var(--orange-light);">
+        <p class="r-card-label" style="color:#7a4e00;">This week</p>
+        <p class="r-card-body" style="color:#5a3800;font-weight:500;">Map exactly how this step currently works from start to finish.</p>
+        <p class="r-card-body" style="margin-top:0.5rem;color:#7a4e00;">Do not fix it yet — just make it visible.</p>
+      </div>
+
+      <!-- Segment -->
+      <div class="r-card" id="r-segment-card" style="display:none;">
+        <p class="r-card-label">Right now, your system most closely reflects:</p>
+        <div class="segment-badge" id="r-segment-badge"></div>
+        <p class="r-card-body" id="r-segment-desc"></p>
+      </div>
+
+      <!-- CTA -->
+      <div class="r-cta-card" id="r-cta">
+        <p class="r-cta-label" id="r-cta-label">Ready to go deeper?</p>
+        <p class="r-cta-body" id="r-cta-body">Get a full system diagnostic and align your next moves with clarity.</p>
+        <button class="btn-cta" id="r-cta-btn" onclick="handleCTA()">Book a Strategy Session →</button>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /.assessment-wrap -->
+
+<script>
+// ─── State ────────────────────────────────────────────
+const state = {
+  currentScreen: 0,
+  likert: {1:[],2:[],3:[],4:[],5:[],6:[]}, // step → [q0,q1,q2,q3]
+  q7_multi: [],
+  q7_frustrating: null,
+  q8_cause: null,
+  q8_response: null,
+  q9_authority: null,
+  q9_role: null,
+  q9_stage: null,
+  email: '',
+  name: ''
+};
+
+const STEPS = ['Interest','Agreement','Payment','Delivery','Follow-Up','Improvement'];
+const TOTAL_SCREENS = 10;
+
+// ─── Navigation ───────────────────────────────────────
+function goTo(n){
+  document.getElementById('screen-'+state.currentScreen).classList.remove('active');
+  const target = n === 'results' ? 'screen-results' : 'screen-'+n;
+  document.getElementById(target).classList.add('active');
+  state.currentScreen = n;
+  updateProgress(n);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateProgress(n){
+  const pct = n === 'results' ? 100 : Math.round((n / TOTAL_SCREENS) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+// ─── Likert scoring ───────────────────────────────────
+function setLikert(step, qIndex, value, btn){
+  if(!state.likert[step]) state.likert[step] = [];
+  state.likert[step][qIndex] = value;
+
+  // Update UI
+  const row = btn.closest('.question-row');
+  row.querySelectorAll('.l-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  row.classList.add('answered');
+
+  // Enable next if all 4 answered
+  const answered = state.likert[step].filter(v => v !== undefined).length;
+  const nextBtn = document.getElementById('next-'+step);
+  if(nextBtn) nextBtn.disabled = answered < 4;
+}
+
+// ─── Choice builders ──────────────────────────────────
+function buildSingle(containerId, options, stateKey, nextBtnId){
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  options.forEach((opt,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="c-indicator"><span class="c-dot"></span></span>${opt}`;
+    btn.onclick = () => {
+      state[stateKey] = opt;
+      el.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      checkMultiScreen(nextBtnId);
+    };
+    el.appendChild(btn);
+  });
+}
+
+function buildMulti(containerId, options, stateKey, nextBtnId){
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  options.forEach((opt,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="c-indicator multi"><span class="c-check">✓</span></span>${opt}`;
+    btn.onclick = () => {
+      btn.classList.toggle('selected');
+      const sel = [];
+      el.querySelectorAll('.choice-btn.selected').forEach(b => sel.push(b.textContent.trim()));
+      state[stateKey] = sel;
+      checkMultiScreen(nextBtnId);
+    };
+    el.appendChild(btn);
+  });
+}
+
+// Checks if screen 7 is complete
+function checkMultiScreen(nextId){
+  const btn = document.getElementById(nextId);
+  if(!btn) return;
+  if(nextId === 'next-7'){
+    btn.disabled = !(state.q7_multi.length > 0 && state.q7_frustrating);
+  } else if(nextId === 'next-8'){
+    btn.disabled = !(state.q8_cause && state.q8_response);
+  } else if(nextId === 'next-9'){
+    btn.disabled = !(state.q9_authority && state.q9_role && state.q9_stage);
+  }
+}
+
+// Override buildSingle to pass correct check
+function buildSingleQ(containerId, options, stateKey, nextBtnId){
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  options.forEach((opt) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="c-indicator"><span class="c-dot"></span></span>${opt}`;
+    btn.onclick = () => {
+      state[stateKey] = opt;
+      el.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      checkMultiScreen(nextBtnId);
+    };
+    el.appendChild(btn);
+  });
+}
+
+// ─── Email check ──────────────────────────────────────
+function checkEmail(){
+  const email = document.getElementById('field-email').value.trim();
+  const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  document.getElementById('next-10').disabled = !valid;
+  state.email = email;
+  state.name = document.getElementById('field-name').value.trim();
+}
+
+// ─── Scoring ──────────────────────────────────────────
+function getStepScore(step){
+  const vals = state.likert[step];
+  if(!vals || vals.length < 4) return 0;
+  return vals.reduce((a,b) => a + (b||0), 0) / 4; // avg out of 5
+}
+
+function getPrimaryBreakdown(){
+  let minScore = Infinity, minStep = 1;
+  for(let s=1; s<=6; s++){
+    const sc = getStepScore(s);
+    if(sc < minScore){ minScore = sc; minStep = s; }
+  }
+  return minStep;
+}
+
+function getSecondaryBreakdown(primary){
+  let scores = [];
+  for(let s=1; s<=6; s++){
+    if(s !== primary) scores.push({step:s, score:getStepScore(s)});
+  }
+  scores.sort((a,b) => a.score - b.score);
+  return scores[0].step;
+}
+
+function getSegment(){
+  const total = [1,2,3,4,5,6].reduce((a,s) => a + getStepScore(s), 0) / 6;
+  if(total < 2.5) return 'Under Strain';
+  if(total < 3.75) return 'Emerging';
+  return 'Growth';
+}
+
+const SEGMENT_DESC = {
+  'Under Strain': 'Your system is under significant strain. Most of your energy is going toward keeping things running rather than building. The good news: clarity on where to focus will change this quickly.',
+  'Emerging': 'Parts of your system are working. The inconsistency you\'re experiencing is structural, not personal. Targeted work on your weakest step will have an outsized effect.',
+  'Growth': 'Your system is reasonably solid. The gap between where you are and where you want to be is narrower than it feels — and likely comes down to one or two specific structural gaps.'
+};
+
+// ─── Pattern sentence lookup ──────────────────────────
+const COMPENSATION_MAP = {
+  'Interest': {
+    'Step in and fix it myself': 'You\'re stepping in to generate interest yourself — relying on effort, relationships, or one-off actions to create opportunities.',
+    'Add more communication': 'You\'re trying to generate interest by explaining more or increasing visibility — but without a system to consistently attract the right people.',
+    'Try a new tool or process': 'You\'re experimenting with new tools or approaches — but without clarity on what actually drives interest.',
+    'Work harder': 'You\'re putting in more effort to create opportunities — but results remain inconsistent.',
+    'Delay or avoid dealing with it': 'You\'re delaying or avoiding visibility efforts — often because it\'s unclear what would actually work.'
+  },
+  'Agreement': {
+    'Step in and fix it myself': 'You\'re stepping in to push decisions forward — trying to manually close gaps in understanding.',
+    'Add more communication': 'You\'re explaining more to resolve hesitation — but the core value may still be unclear.',
+    'Try a new tool or process': 'You\'re adjusting how you present offers — but changes don\'t consistently improve decisions.',
+    'Work harder': 'You\'re putting more effort into conversations — but effort doesn\'t reliably lead to agreement.',
+    'Delay or avoid dealing with it': 'You\'re delaying decision points — because outcomes feel uncertain or unclear.'
+  },
+  'Payment': {
+    'Step in and fix it myself': 'You\'re stepping in to ensure commitment happens — managing or chasing payment directly.',
+    'Add more communication': 'You\'re sending reminders or clarifying — but the path to commitment may still be unclear.',
+    'Try a new tool or process': 'You\'re introducing tools — but they don\'t consistently improve follow-through.',
+    'Work harder': 'You\'re increasing effort to secure commitment — but results remain inconsistent.',
+    'Delay or avoid dealing with it': 'You\'re delaying conversations around payment — because they feel uncomfortable or unclear.'
+  },
+  'Delivery': {
+    'Step in and fix it myself': 'You\'re stepping in to keep delivery on track — filling gaps and holding everything together.',
+    'Add more communication': 'You\'re clarifying expectations — but problems continue to repeat.',
+    'Try a new tool or process': 'You\'re introducing tools — but they add complexity instead of stability.',
+    'Work harder': 'You\'re increasing effort to keep things moving — but results still depend on you.',
+    'Delay or avoid dealing with it': 'You\'re delaying addressing delivery issues — because the root cause isn\'t clear.'
+  },
+  'Follow-Up': {
+    'Step in and fix it myself': 'You\'re manually maintaining relationships — relying on memory and effort.',
+    'Add more communication': 'You\'re reaching out more — but without a consistent structure.',
+    'Try a new tool or process': 'You\'re using tools — but they don\'t consistently generate results.',
+    'Work harder': 'You\'re putting in more effort — but still missing opportunities.',
+    'Delay or avoid dealing with it': 'You\'re delaying follow-up — because it\'s unclear what to say or do.'
+  },
+  'Improvement': {
+    'Step in and fix it myself': 'You\'re solving problems individually instead of addressing patterns.',
+    'Add more communication': 'You\'re discussing issues — but not translating insight into change.',
+    'Try a new tool or process': 'You\'re introducing changes — but not addressing root causes.',
+    'Work harder': 'You\'re increasing effort — but results don\'t improve.',
+    'Delay or avoid dealing with it': 'You\'re delaying reflection — because the problem isn\'t clearly defined.'
+  }
+};
+
+const MEANING_MAP = {
+  'Interest': `<p>When this step is weak, your system isn't generating consistent opportunities.</p><p>This means you're likely relying on referrals, timing, or one-off efforts — so results feel unpredictable and hard to sustain. Even if you're good at what you do, a lack of consistent interest creates pressure everywhere else in your system.</p><p>This doesn't mean you're doing something wrong. It means your system is missing the structure needed to produce consistent results.</p>`,
+  'Agreement': `<p>When this step is weak, people don't clearly understand your value — so decisions stall, delay, or never happen.</p><p>This creates a pattern where opportunities look promising at first but fail to convert into real commitments. It's not a lack of effort — it's a lack of clarity at the moment where decisions are made.</p><p>This doesn't mean you're doing something wrong. It means your system is missing the structure needed to produce consistent results.</p>`,
+  'Payment': `<p>When this step is weak, value isn't being converted into clear commitment.</p><p>You may be having good conversations or even verbal agreement — but things slow down or fall apart before payment happens. This creates inconsistency in results and makes it difficult to rely on your system.</p><p>This doesn't mean you're doing something wrong. It means your system is missing the structure needed to produce consistent results.</p>`,
+  'Delivery': `<p>When this step is weak, results depend too heavily on you or constant effort to keep things moving.</p><p>Work may get done — but it feels reactive, inconsistent, or harder than it should be. Over time, this creates stress and makes it difficult to step back without things breaking down.</p><p>This doesn't mean you're doing something wrong. It means your system is missing the structure needed to produce consistent results.</p>`,
+  'Follow-Up': `<p>When this step is weak, relationships end too early.</p><p>Even when the work is good, there's no consistent way to maintain connection, generate repeat opportunities, or build long-term value. This leads to missed opportunities and forces you to constantly start over.</p><p>This doesn't mean you're doing something wrong. It means your system is missing the structure needed to produce consistent results.</p>`,
+  'Improvement': `<p>When this step is weak, your system doesn't learn or adapt.</p><p>Problems repeat, progress feels slow, and you may sense something is off — but can't clearly identify why. Without a structured way to review and improve, effort increases but results don't meaningfully change.</p><p>This doesn't mean you're doing something wrong. It means your system is missing the structure needed to produce consistent results.</p>`
+};
+
+// ─── Show Results ─────────────────────────────────────
+async function submitToOntraport(primaryName, secondaryName, segment){
+  try {
+    const payload = new URLSearchParams({
+      uid: 'p2c264727f26',
+      firstname: state.name,
+      email: state.email,
+      f3792: primaryName,
+      f3793: secondaryName,
+      f3794: segment,
+      f3795: getStepScore(1).toFixed(1),
+      f3796: getStepScore(2).toFixed(1),
+      f3797: getStepScore(3).toFixed(1),
+      f3798: getStepScore(4).toFixed(1),
+      f3799: getStepScore(5).toFixed(1),
+      f3800: getStepScore(6).toFixed(1),
+      f3801: state.q7_multi.join(', '),
+      f3802: state.q7_frustrating || ''
+    });
+    await fetch('https://api.ontraport.com/1/Forms/corsMail', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: payload.toString()
+    });
+  } catch(e){
+    console.warn('Ontraport submission error:', e);
+  }
+}
+
+async function showResults(){
+  const primary = getPrimaryBreakdown();
+  const secondary = getSecondaryBreakdown(primary);
+  const primaryName = STEPS[primary-1];
+  const secondaryName = STEPS[secondary-1];
+  const segment = getSegment();
+  const authorityYes = state.q9_authority && state.q9_authority.startsWith('Yes');
+  const responseKey = state.q8_response || '';
+
+  // Submit to Ontraport (non-blocking — results show regardless)
+  submitToOntraport(primaryName, secondaryName, segment);
+
+  // Map response to compensation pattern key
+  const responseMap = {
+    'Step in and fix it myself': 'Step in and fix it myself',
+    'Add more communication': 'Add more communication',
+    'Try a new tool or process': 'Try a new tool or process',
+    'Work harder': 'Work harder',
+    'Delay or avoid dealing with it': 'Delay or avoid dealing with it'
+  };
+  const patternKey = responseMap[responseKey] || 'Work harder';
+
+  // Hero
+  document.getElementById('r-primary-name').textContent = primaryName;
+  document.getElementById('r-secondary-text').textContent = 'Pressure also building in: ' + secondaryName;
+
+  // Score bars
+  const barsEl = document.getElementById('score-bars');
+  barsEl.innerHTML = '';
+  for(let s=1; s<=6; s++){
+    const score = getStepScore(s);
+    const pct = Math.round((score/5)*100);
+    const cls = score < 2.5 ? 'low' : score < 3.75 ? 'mid' : 'high';
+    barsEl.innerHTML += `
+      <div class="score-bar-row">
+        <span class="sbl">${STEPS[s-1]}</span>
+        <div class="sbt"><div class="sbf ${cls}" style="width:${pct}%"></div></div>
+        <span class="sbv">${score.toFixed(1)}</span>
+      </div>`;
+  }
+
+  // Meaning
+  document.getElementById('r-meaning').innerHTML = MEANING_MAP[primaryName] || '';
+
+  // Pattern sentence
+  const patternSentence = (COMPENSATION_MAP[primaryName] && COMPENSATION_MAP[primaryName][patternKey])
+    || 'You\'re compensating through effort — keeping things moving without addressing the underlying structure.';
+  document.getElementById('r-pattern-sentence').textContent = patternSentence;
+
+  // Authority
+  const authEl = document.getElementById('r-authority');
+  if(authorityYes){
+    authEl.innerHTML = `<p>You have the authority to change this system.</p><p style="margin-top:0.5rem;">Your next step is not to work harder — but to redesign how this part of your system operates so it produces consistent results without relying on effort.</p>`;
+  } else {
+    authEl.innerHTML = `<p>You are being held accountable for a system you cannot redesign.</p><p style="margin-top:0.5rem;">This is not a performance issue — it's a structural constraint. Your next step is to decide whether to continue compensating, influence change, or build something outside this system.</p>`;
+  }
+
+  // Segment
+  document.getElementById('r-segment-card').style.display = 'block';
+  document.getElementById('r-segment-badge').textContent = segment;
+  document.getElementById('r-segment-desc').textContent = SEGMENT_DESC[segment];
+
+  // CTA
+  if(authorityYes){
+    document.getElementById('r-cta-btn').textContent = 'Book a Strategy Session →';
+    document.getElementById('r-cta-body').textContent = 'Get a full system diagnostic and align your next moves with clarity.';
+  } else {
+    document.getElementById('r-cta-btn').textContent = 'Explore Your Next Step →';
+    document.getElementById('r-cta-body').textContent = 'Learn how to apply your expertise in a way that creates real impact — without being constrained by your current system.';
+  }
+
+  goTo('results');
+}
+
+// ─── CTA destination — update this URL ───────────────
+function handleCTA(){
+  window.open('https://possibility.ca/booking/tana-30', '_blank');
+}
+
+// ─── Initialize choice screens ────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+
+  buildMulti('q7-multi',
+    ['Lead generation','Closing / decision-making','Delivery / fulfilling our promises','Communication','Everything feels harder than it should'],
+    'q7_multi','next-7'
+  );
+
+  buildSingleQ('q7-frustrating',
+    ['Interest','Agreement','Payment','Delivery','Follow-Up','Improvement'],
+    'q7_frustrating','next-7'
+  );
+
+  buildSingleQ('q8-cause',
+    ['People (performance, accountability)','Communication','Process or tools','Leadership or decision-making','I\'m not sure'],
+    'q8_cause','next-8'
+  );
+
+  buildSingleQ('q8-response',
+    ['Step in and fix it myself','Add more communication','Try a new tool or process','Work harder','Delay or avoid dealing with it'],
+    'q8_response','next-8'
+  );
+
+  buildSingleQ('q9-authority',
+    ['Yes — I can make structural changes','No — I\'m expected to deliver results, but I can\'t change the system'],
+    'q9_authority','next-9'
+  );
+
+  buildSingleQ('q9-role',
+    ['Business owner / CEO','Senior leader / executive','Manager','Individual contributor / specialist','Consultant / advisor'],
+    'q9_role','next-9'
+  );
+
+  buildSingleQ('q9-stage',
+    ['Early stage / building','Growing / scaling','Established but inconsistent','Mature but needing change','Not sure'],
+    'q9_stage','next-9'
+  );
+
+});
+</script>
+</body>
+</html>
