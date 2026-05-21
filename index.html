@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Results Reality Check — Possibility.ca</title>
+<title>The Possibility Heatmap — Possibility.ca</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
@@ -39,28 +39,22 @@ input{font-family:inherit}
 /* ─── Layout ─────────────────────────────────────────── */
 body{
   font-family:'Roboto',sans-serif;
-  background:var(--bg);
+  background:#fff;
   color:var(--text-primary);
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:0 0 4rem;
+  margin:0;
+  padding:0;
 }
 
 .assessment-wrap{
   width:100%;
-  max-width:var(--max-w);
   background:var(--surface);
-  min-height:100vh;
   display:flex;
   flex-direction:column;
-  box-shadow:0 0 0 1px var(--border);
 }
 
 /* ─── Progress bar ───────────────────────────────────── */
 .progress-track{
-  height:3px;
+  height:6px;
   background:var(--border);
   position:sticky;
   top:0;
@@ -68,7 +62,7 @@ body{
 }
 .progress-fill{
   height:100%;
-  background:var(--accent);
+  background:var(--orange);
   transition:width 0.4s cubic-bezier(.4,0,.2,1);
 }
 
@@ -466,7 +460,8 @@ body{
   <!-- ─── LANDING ───────────────────────────────────── -->
   <div class="screen active" id="screen-0">
     <div class="step-label">Possibility.ca — Diagnostic Tool</div>
-    <h1 class="screen-title">The Results Reality Check</h1>
+    <h1 class="screen-title">The Possibility Heatmap™</h1>
+    <p style="font-size:15px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-primary);margin-bottom:1.25rem;">A Business Systems Diagnostic</p>
     <p class="screen-sub">Most people try to fix what they can see — people, performance, or processes. But your results are being produced by a system. In less than 15 minutes, you'll see:</p>
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem;">
       <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-secondary);">
@@ -496,7 +491,7 @@ body{
   <div class="screen" id="screen-1">
     <div class="step-label">Step 1 of 10</div>
     <h2 class="screen-title">Interest</h2>
-    <p class="screen-sub">How attention enters your system.</p>
+    <p class="screen-sub">How people find you. <span style="color:var(--text-muted);">Examples: Website form, calls, social media inquiries.</span></p>
     <div class="instruction-chip">Rate each statement: 1 = Not true &nbsp;·&nbsp; 3 = Somewhat true &nbsp;·&nbsp; 5 = Fully true</div>
     <div class="likert-questions" id="lq-1">
       <div class="question-row" data-step="1" data-q="0">
@@ -550,7 +545,7 @@ body{
   <div class="screen" id="screen-2">
     <div class="step-label">Step 2 of 10</div>
     <h2 class="screen-title">Agreement</h2>
-    <p class="screen-sub">Turning interest into decisions.</p>
+    <p class="screen-sub">When someone says yes. <span style="color:var(--text-muted);">Examples: Sign a contract, book an appointment, place an order.</span></p>
     <div class="instruction-chip">Rate each statement: 1 = Not true &nbsp;·&nbsp; 3 = Somewhat true &nbsp;·&nbsp; 5 = Fully true</div>
     <div class="likert-questions" id="lq-2">
       <div class="question-row" data-step="2" data-q="0">
@@ -604,7 +599,7 @@ body{
   <div class="screen" id="screen-3">
     <div class="step-label">Step 3 of 10</div>
     <h2 class="screen-title">Payment</h2>
-    <p class="screen-sub">How value is exchanged.</p>
+    <p class="screen-sub">How money is collected. <span style="color:var(--text-muted);">Examples: Online payment, invoice, subscription.</span></p>
     <div class="instruction-chip">Rate each statement: 1 = Not true &nbsp;·&nbsp; 3 = Somewhat true &nbsp;·&nbsp; 5 = Fully true</div>
     <div class="likert-questions" id="lq-3">
       <div class="question-row" data-step="3" data-q="0">
@@ -658,7 +653,7 @@ body{
   <div class="screen" id="screen-4">
     <div class="step-label">Step 4 of 10</div>
     <h2 class="screen-title">Delivery</h2>
-    <p class="screen-sub">How the work gets done.</p>
+    <p class="screen-sub">How you fulfill the customer promise. <span style="color:var(--text-muted);">Examples: Consulting session, product shipped, service completed.</span></p>
     <div class="instruction-chip">Rate each statement: 1 = Not true &nbsp;·&nbsp; 3 = Somewhat true &nbsp;·&nbsp; 5 = Fully true</div>
     <div class="likert-questions" id="lq-4">
       <div class="question-row" data-step="4" data-q="0">
@@ -712,7 +707,7 @@ body{
   <div class="screen" id="screen-5">
     <div class="step-label">Step 5 of 10</div>
     <h2 class="screen-title">Follow-Up</h2>
-    <p class="screen-sub">What happens after delivery.</p>
+    <p class="screen-sub">What happens after Delivery. <span style="color:var(--text-muted);">Examples: Survey, check-in call, thank you message.</span></p>
     <div class="instruction-chip">Rate each statement: 1 = Not true &nbsp;·&nbsp; 3 = Somewhat true &nbsp;·&nbsp; 5 = Fully true</div>
     <div class="likert-questions" id="lq-5">
       <div class="question-row" data-step="5" data-q="0">
@@ -766,7 +761,7 @@ body{
   <div class="screen" id="screen-6">
     <div class="step-label">Step 6 of 10</div>
     <h2 class="screen-title">Improvement</h2>
-    <p class="screen-sub">How the system gets better.</p>
+    <p class="screen-sub">How the business gets better.</p>
     <div class="instruction-chip">Rate each statement: 1 = Not true &nbsp;·&nbsp; 3 = Somewhat true &nbsp;·&nbsp; 5 = Fully true</div>
     <div class="likert-questions" id="lq-6">
       <div class="question-row" data-step="6" data-q="0">
