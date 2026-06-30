@@ -970,8 +970,8 @@ body{
       <!-- One action -->
       <div class="r-card" style="border-color:var(--orange);background:var(--orange-light);">
         <p class="r-card-label" style="color:#7a4e00;">This week</p>
-        <p class="r-card-body" style="color:#5a3800;font-weight:500;">Map exactly how this step currently works from start to finish.</p>
-        <p class="r-card-body" style="margin-top:0.5rem;color:#7a4e00;">Do not fix it yet — just make it visible.</p>
+        <p class="r-card-body" id="r-action" style="color:#5a3800;font-weight:500;">Map exactly how this step currently works from start to finish.</p>
+        <p class="r-card-body" style="margin-top:0.5rem;color:#7a4e00;">Don't fix it yet — just make it visible.</p>
       </div>
 
       <!-- Segment -->
@@ -1292,6 +1292,16 @@ const MEANING_MAP = {
   'Improvement': `<p>When this step is weak, your system doesn't learn or adapt.</p><p>Problems repeat, progress feels slow, and you may sense something is off — but can't clearly identify why. Without a structured way to review and improve, effort increases but results don't meaningfully change.</p><p>This doesn't mean you're doing something wrong. It means your system is missing the structure needed to produce consistent results.</p>`
 };
 
+// ─── "This week" action, by primary breakdown ─────────
+const ACTION_MAP = {
+  'Interest': 'Map exactly how people currently find you and become leads — every source, every path, start to finish.',
+  'Agreement': 'Map exactly what happens between someone showing interest and someone saying yes — every step, conversation, and decision point.',
+  'Payment': 'Map exactly how money gets collected — from the moment someone agrees to the moment you\'re paid, including every delay or friction point.',
+  'Delivery': 'Map exactly how your product or service gets delivered, start to finish — including every part that depends on you personally.',
+  'Follow-Up': 'Map exactly what happens after you finish a piece of work — every touchpoint with a client, or the place where communication ends.',
+  'Improvement': 'Map exactly how you currently review and improve the business — when it happens, what you look at, and what you do with what you learn.'
+};
+
 // ─── Show Results ─────────────────────────────────────
 async function submitToOntraport(primaryName, secondaryName, segment, offerMatch){
   try {
@@ -1379,6 +1389,9 @@ async function showResults(){
 
   // Meaning
   document.getElementById('r-meaning').innerHTML = MEANING_MAP[primaryName] || '';
+
+  // "This week" action — specific to the primary breakdown
+  document.getElementById('r-action').textContent = ACTION_MAP[primaryName] || 'Map exactly how this step currently works from start to finish.';
 
   // Pattern sentence
   const patternSentence = (COMPENSATION_MAP[primaryName] && COMPENSATION_MAP[primaryName][patternKey])
