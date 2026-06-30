@@ -1113,7 +1113,7 @@ function buildSingleQWithDesc(containerId, options, stateKey, nextBtnId){
       <span style="font-size:12px;color:var(--text-muted);margin-left:32px;margin-top:2px;">${opt.desc}</span>
     `;
     btn.onclick = () => {
-      state[stateKey] = opt.label;
+      state[stateKey] = opt.value || opt.label;
       el.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
       checkMultiScreen(nextBtnId);
@@ -1325,7 +1325,7 @@ async function submitToOntraport(primaryName, secondaryName, segment, offerMatch
       // ─── Diagnostic fields ────────────────────────
       f3792: primaryName,
       f3793: secondaryName,
-      f3794: segment,
+      f3808: segment,
       f3795: getStepScore(1).toFixed(1),
       f3796: getStepScore(2).toFixed(1),
       f3797: getStepScore(3).toFixed(1),
@@ -1335,10 +1335,10 @@ async function submitToOntraport(primaryName, secondaryName, segment, offerMatch
       f3801: state.q7_multi.join(', '),
       f3802: state.q7_frustrating || '',
       // ─── Stage / pathway / urgency / offer match ──
-      f3804: state.q9_stage || '',
-      f3805: state.q9_pathway || '',
-      f3806: state.q9_urgency || '',
-      f3807: offerMatch || ''
+      f3809: state.q9_stage || '',
+      f3810: state.q9_pathway || '',
+      f3811: state.q9_urgency || '',
+      f3812: offerMatch || ''
     });
     const response = await fetch('https://forms.ontraport.com/v2.4/form_processor.php?', {
       method: 'POST',
@@ -1467,10 +1467,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   buildSingleQWithDesc('q9-stage',
     [
-      {label:'No business yet', desc:'I have expertise or an idea, but haven\'t started'},
-      {label:'Business but chaotic', desc:'I\'m running it, but it\'s messy or held together by me'},
-      {label:'Established and growing', desc:'Stable and scaling, but hitting new constraints'},
-      {label:'Established and complex', desc:'Larger or more complex, navigating ongoing change'}
+      {label:'I don\'t have a business yet', value:'No business yet', desc:'I have expertise or an idea, but haven\'t started'},
+      {label:'My business feels chaotic', value:'Business but chaotic', desc:'I\'m running it, but it\'s messy or held together by me'},
+      {label:'My business is established & growing', value:'Established and growing', desc:'Stable and scaling, but hitting new constraints'},
+      {label:'My business is well-established & complex', value:'Established and complex', desc:'Larger or more complex, navigating ongoing change'}
     ],
     'q9_stage','next-9'
   );
